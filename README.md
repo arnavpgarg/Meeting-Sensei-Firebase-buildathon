@@ -4,7 +4,7 @@
 
 ![Meeting Sensei Screenshot](https://storage.googleapis.com/static.aifirebase.dev/project-screenshots/meeting-sensei.png)
 
-[**Live Demo**](https://your-preview-link-here.com)
+Live Preview - https://studio.firebase.google.com/studio-7334550565
 
 ## ✨ Key Features
 
