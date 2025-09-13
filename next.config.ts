@@ -33,6 +33,20 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+   async redirects() {
+    return [
+      {
+        source: '/accountability',
+        destination: '/history',
+        permanent: true,
+      },
+       {
+        source: '/timeline',
+        destination: '/history',
+        permanent: true,
+      },
+    ]
+  },
 };
 
 export default nextConfig;

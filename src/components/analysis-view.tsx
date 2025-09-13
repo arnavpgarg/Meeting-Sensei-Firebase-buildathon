@@ -27,15 +27,10 @@ import { useEffect } from 'react';
 type AnalysisViewProps = {
   analysis: Analysis;
   onReset: () => void;
+  meetingId?: string;
 };
 
-export function AnalysisView({ analysis, onReset }: AnalysisViewProps) {
-  useEffect(() => {
-    // Store analysis in localStorage to be accessed by the accountability page
-    if (typeof window !== 'undefined' && window.localStorage) {
-      localStorage.setItem('meetingAnalysis', JSON.stringify(analysis));
-    }
-  }, [analysis]);
+export function AnalysisView({ analysis, onReset, meetingId }: AnalysisViewProps) {
 
   const handleExportTxt = () => {
     const { category, sentiment, summary, keyDecisions, timeline, teamTasks } =
@@ -89,7 +84,7 @@ ${tasksText}
     const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url;
+a.href = url;
     a.download = 'meeting-analysis.txt';
     a.click();
     URL.revokeObjectURL(url);
@@ -108,14 +103,14 @@ ${tasksText}
             <Redo className="mr-2" />
             New Analysis
           </Button>
-          <Button asChild variant="outline">
-            <Link href="/accountability">
+          <Button asChild variant="outline" disabled={!meetingId}>
+            <Link href={`/meeting/${meetingId}/accountability`}>
               <Users className="mr-2" />
               Accountability
             </Link>
           </Button>
-          <Button asChild variant="outline">
-            <Link href="/timeline">
+          <Button asChild variant="outline" disabled={!meetingId}>
+            <Link href={`/meeting/${meetingId}/timeline`}>
               <BarChart2 className="mr-2" />
               Actions Chart
             </Link>

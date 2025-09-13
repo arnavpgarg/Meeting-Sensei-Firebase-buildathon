@@ -17,3 +17,11 @@ export type Analysis = {
 };
 
 export type Transcription = TranscribeVideoOutput | TranscribeDocumentOutput;
+
+export type Meeting = Analysis & {
+  id: string;
+  transcript: string;
+  createdAt: {
+    toDate: () => Date;
+  };
+};
