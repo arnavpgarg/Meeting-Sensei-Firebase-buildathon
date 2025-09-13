@@ -32,6 +32,7 @@ const languages = [
   { value: 'Spanish', label: 'Spanish' },
   { value: 'French', label: 'French' },
   { value: 'German', label: 'German' },
+  { value: 'Hindi', label: 'Hindi' },
   { value: 'Italian', label: 'Italian' },
   { value: 'Portuguese', label: 'Portuguese' },
   { value: 'Dutch', label: 'Dutch' },
