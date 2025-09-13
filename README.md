@@ -2,7 +2,10 @@
 
 **Meeting Sensei** is an AI-powered application designed to streamline your meeting workflow. It transforms raw meeting transcripts from text, PDF, or video files into structured, actionable insights. With features like multi-language summaries, sentiment analysis, and task tracking, it ensures that no critical information is ever lost.
 
-Live Preview - https://9000-firebase-studio-1757748261027.cluster-osvg2nzmmzhzqqjio6oojllbg4.cloudworkstations.dev
+![Meeting Sensei Screenshot](https://storage.googleapis.com/static.aifirebase.dev/project-screenshots/meeting-sensei.png)
+_To replace this image, update the URL above with a link to your screenshot._
+
+[**Live Demo**](https://your-preview-link-here.com)
 
 ## ✨ Key Features
 
