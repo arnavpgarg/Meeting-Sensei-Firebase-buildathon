@@ -51,7 +51,7 @@ export function TranscriptInput({
 }: TranscriptInputProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
-  const [language, setLanguage] = useState<string>('English');
+  const [language, setLanguage] = useState<string | undefined>(undefined);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
