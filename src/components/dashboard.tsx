@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import type { Analysis } from '@/lib/types';
-import { analyzeTranscript } from '@/lib/actions';
+import { analyzeTranscript, analyzeVideo } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
 import { TranscriptInput } from '@/components/transcript-input';
 import { AnalysisView } from '@/components/analysis-view';
@@ -50,23 +50,46 @@ export function Dashboard() {
     setAnalysis(null);
   };
 
-  const handleAnalyze = async (currentTranscript: string) => {
+  const handleAnalyze = async (currentTranscript: string, file?: File) => {
     if (isLoading) return;
     setIsLoading(true);
     setAnalysis(null);
 
-    const { data, error } = await analyzeTranscript(currentTranscript);
+    let result;
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = async () => {
+        const videoDataUri = reader.result as string;
+        result = await analyzeVideo(videoDataUri);
+        handleResult(result);
+      };
+      reader.onerror = () => {
+        handleResult({
+          data: null,
+          error: 'Failed to read the video file.',
+        });
+      };
+    } else {
+      result = await analyzeTranscript(currentTranscript);
+      handleResult(result);
+    }
+  };
 
-    if (error) {
+  const handleResult = (result: {
+    data: Analysis | null;
+    error: string | null;
+  }) => {
+    if (result.error) {
       toast({
         variant: 'destructive',
         title: 'Analysis Failed',
-        description: error,
+        description: result.error,
       });
     }
 
-    if (data) {
-      setAnalysis(data);
+    if (result.data) {
+      setAnalysis(result.data);
     }
     setIsLoading(false);
   };
