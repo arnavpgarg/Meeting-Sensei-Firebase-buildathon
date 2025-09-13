@@ -9,7 +9,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { FileDown, FileText, Redo, Share2, Users } from 'lucide-react';
+import {
+  FileDown,
+  FileText,
+  Redo,
+  Share2,
+  Users,
+  BarChart2,
+} from 'lucide-react';
 import { SummaryCard } from './summary-card';
 import { KeyDecisionsCard } from './key-decisions-card';
 import { MetadataCard } from './metadata-card';
@@ -73,7 +80,7 @@ ${decisionsText}
 
 ACTION TIMELINE
 ---------------
-${timeline.timeline}
+${timeline.ganttChartMarkdown}
 
 TEAM ACCOUNTABILITY
 -------------------
@@ -96,7 +103,7 @@ ${tasksText}
     <div className="flex flex-col gap-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 no-print">
         <h2 className="font-headline text-3xl font-bold">Analysis Results</h2>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button variant="outline" onClick={onReset}>
             <Redo className="mr-2" />
             New Analysis
@@ -105,6 +112,12 @@ ${tasksText}
             <Link href="/accountability">
               <Users className="mr-2" />
               Accountability
+            </Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link href="/timeline">
+              <BarChart2 className="mr-2" />
+              Gantt Chart
             </Link>
           </Button>
           <DropdownMenu>
@@ -145,7 +158,7 @@ ${tasksText}
             <KeyDecisionsCard decisions={analysis.keyDecisions.decisions} />
           </div>
           <div className="col-span-1 md:col-span-2 lg:col-span-2">
-            <TimelineCard timeline={analysis.timeline.timeline} />
+            <TimelineCard timeline={analysis.timeline.ganttChartMarkdown} />
           </div>
         </div>
       </div>
