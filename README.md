@@ -4,7 +4,7 @@
 
 ![Meeting Sensei Screenshot](https://storage.googleapis.com/static.aifirebase.dev/project-screenshots/meeting-sensei.png)
 
-Live Preview - https://studio.firebase.google.com/studio-7334550565
+Live Preview - https://9000-firebase-studio-1757748261027.cluster-osvg2nzmmzhzqqjio6oojllbg4.cloudworkstations.dev
 
 ## ✨ Key Features
 
