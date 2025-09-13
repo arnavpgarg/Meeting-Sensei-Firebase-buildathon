@@ -1,6 +1,7 @@
 'use server';
 
 import { summarizeMeetingTranscript } from '@/ai/flows/summarize-meeting-transcript';
+import type { SummarizeMeetingTranscriptOutput } from '@/ai/flows/summarize-meeting-transcript';
 import { extractKeyDecisions } from '@/ai/flows/extract-key-decisions';
 import { categorizeMeeting } from '@/ai/flows/categorize-meeting-by-topic';
 import { analyzeMeetingSentiment } from '@/ai/flows/analyze-meeting-sentiment';
@@ -91,6 +92,29 @@ export async function analyzeDocument(
     return {
       data: null,
       error: 'An error occurred during document analysis. Please try again.',
+    };
+  }
+}
+
+export async function getLiveSummary(
+  transcript: string,
+  language?: string
+): Promise<{ data: SummarizeMeetingTranscriptOutput | null; error: string | null }> {
+  if (!transcript || transcript.trim().length < 20) {
+    return {
+      data: null,
+      error: 'Transcript is too short to summarize.',
+    };
+  }
+
+  try {
+    const summary = await summarizeMeetingTranscript({ transcript, language });
+    return { data: summary, error: null };
+  } catch (e) {
+    console.error('Error during live summary generation:', e);
+    return {
+      data: null,
+      error: 'An error occurred while generating the summary. Please try again.',
     };
   }
 }

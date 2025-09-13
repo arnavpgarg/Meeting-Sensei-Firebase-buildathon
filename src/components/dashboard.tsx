@@ -2,11 +2,16 @@
 
 import { useState } from 'react';
 import type { Analysis } from '@/lib/types';
-import { analyzeTranscript, analyzeVideo, analyzeDocument } from '@/lib/actions';
+import {
+  analyzeTranscript,
+  analyzeVideo,
+  analyzeDocument,
+} from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
 import { TranscriptInput } from '@/components/transcript-input';
 import { AnalysisView } from '@/components/analysis-view';
 import { AnalysisSkeleton } from '@/components/analysis-skeleton';
+import { LiveSummary } from './live-summary';
 
 export function Dashboard() {
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
@@ -16,12 +21,18 @@ export function Dashboard() {
 
   const handleReset = () => {
     setAnalysis(null);
+    setTranscript('');
   };
 
-  const handleAnalyze = async (currentTranscript: string, file?: File, language?: string) => {
+  const handleAnalyze = async (
+    currentTranscript: string,
+    file?: File,
+    language?: string
+  ) => {
     if (isLoading) return;
     setIsLoading(true);
     setAnalysis(null);
+    setTranscript(currentTranscript);
 
     let result;
     if (file) {
@@ -73,12 +84,17 @@ export function Dashboard() {
       ) : analysis ? (
         <AnalysisView analysis={analysis} onReset={handleReset} />
       ) : (
-        <TranscriptInput
-          onAnalyze={handleAnalyze}
-          isLoading={isLoading}
-          transcript={transcript}
-          setTranscript={setTranscript}
-        />
+        <div className="space-y-8">
+          <TranscriptInput
+            onAnalyze={handleAnalyze}
+            isLoading={isLoading}
+            transcript={transcript}
+            setTranscript={setTranscript}
+          />
+          <LiveSummary
+            transcript={transcript}
+          />
+        </div>
       )}
     </div>
   );
