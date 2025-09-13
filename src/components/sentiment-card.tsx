@@ -1,3 +1,5 @@
+'use client';
+
 import { Smile, Meh, Frown, Icon } from 'lucide-react';
 import {
   Card,
