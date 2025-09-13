@@ -32,7 +32,7 @@ export default function TimelinePage() {
           </Link>
         </Button>
         <h1 className="font-headline text-3xl font-bold ml-2">
-          Action Timeline - Gantt Chart
+          Actions Chart
         </h1>
       </div>
 

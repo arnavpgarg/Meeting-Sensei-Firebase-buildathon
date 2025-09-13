@@ -1,6 +1,5 @@
 'use client';
 
-import { Smile, Meh, Frown, Icon } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -19,23 +18,20 @@ type SentimentCardProps = {
 
 const sentimentConfig: Record<
   Sentiment,
-  { Icon: Icon; color: string; value: number; label: string }
+  { colorClass: string; value: number; label: string }
 > = {
   positive: {
-    Icon: Smile,
-    color: 'text-green-500',
+    colorClass: 'bg-green-500',
     value: 100,
     label: 'Positive',
   },
   neutral: {
-    Icon: Meh,
-    color: 'text-yellow-500',
+    colorClass: 'bg-yellow-500',
     value: 50,
     label: 'Neutral',
   },
   negative: {
-    Icon: Frown,
-    color: 'text-red-500',
+    colorClass: 'bg-red-500',
     value: 10,
     label: 'Negative',
   },
@@ -50,11 +46,10 @@ export function SentimentCard({ sentiment, reason }: SentimentCardProps) {
         <CardTitle className="font-headline text-lg">Sentiment Analysis</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex items-center gap-3">
-          <config.Icon className={`h-8 w-8 ${config.color}`} />
+        <div className="flex items-center justify-between gap-3">
           <p className="text-2xl font-semibold">{config.label}</p>
         </div>
-        <Progress value={config.value} className="h-3" />
+        <Progress value={config.value} className="h-3 [&>div]:bg-[var(--sentiment-color)]" style={{'--sentiment-color': `var(--${config.label.toLowerCase()})`} as React.CSSProperties} />
         <CardDescription>{reason}</CardDescription>
       </CardContent>
     </Card>

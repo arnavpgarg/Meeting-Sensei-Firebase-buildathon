@@ -117,7 +117,7 @@ ${tasksText}
           <Button asChild variant="outline">
             <Link href="/timeline">
               <BarChart2 className="mr-2" />
-              Gantt Chart
+              Actions Chart
             </Link>
           </Button>
           <DropdownMenu>
