@@ -7,6 +7,7 @@ import { analyzeMeetingSentiment } from '@/ai/flows/analyze-meeting-sentiment';
 import { generateActionTimeline } from '@/ai/flows/generate-action-timeline';
 import { transcribeVideo } from '@/ai/flows/transcribe-video';
 import { transcribeDocument } from '@/ai/flows/transcribe-document';
+import { extractTeamTasks } from '@/ai/flows/extract-team-tasks';
 import type { Analysis } from './types';
 
 async function runAnalysis(
@@ -20,17 +21,24 @@ async function runAnalysis(
     };
   }
   try {
-    const [summary, keyDecisions, category, sentiment, timeline] =
-      await Promise.all([
-        summarizeMeetingTranscript({ transcript, language }),
-        extractKeyDecisions({ transcript }),
-        categorizeMeeting({ transcript }),
-        analyzeMeetingSentiment({ transcript }),
-        generateActionTimeline({ transcript }),
-      ]);
+    const [
+      summary,
+      keyDecisions,
+      category,
+      sentiment,
+      timeline,
+      teamTasks,
+    ] = await Promise.all([
+      summarizeMeetingTranscript({ transcript, language }),
+      extractKeyDecisions({ transcript }),
+      categorizeMeeting({ transcript }),
+      analyzeMeetingSentiment({ transcript }),
+      generateActionTimeline({ transcript }),
+      extractTeamTasks({ transcript }),
+    ]);
 
     return {
-      data: { summary, keyDecisions, category, sentiment, timeline },
+      data: { summary, keyDecisions, category, sentiment, timeline, teamTasks },
       error: null,
     };
   } catch (e) {

@@ -1,6 +1,7 @@
 'use client';
 
 import type { Analysis } from '@/lib/types';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -8,12 +9,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { FileDown, FileText, Redo, Share2 } from 'lucide-react';
+import { FileDown, FileText, Redo, Share2, Users } from 'lucide-react';
 import { SummaryCard } from './summary-card';
 import { KeyDecisionsCard } from './key-decisions-card';
 import { MetadataCard } from './metadata-card';
 import { SentimentCard } from './sentiment-card';
 import { TimelineCard } from './timeline-card';
+import { useEffect } from 'react';
 
 type AnalysisViewProps = {
   analysis: Analysis;
@@ -21,15 +23,34 @@ type AnalysisViewProps = {
 };
 
 export function AnalysisView({ analysis, onReset }: AnalysisViewProps) {
-  
+  useEffect(() => {
+    // Store analysis in localStorage to be accessed by the accountability page
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.setItem('meetingAnalysis', JSON.stringify(analysis));
+    }
+  }, [analysis]);
+
   const handleExportTxt = () => {
-    const { category, sentiment, summary, keyDecisions, timeline } = analysis;
+    const { category, sentiment, summary, keyDecisions, timeline, teamTasks } =
+      analysis;
     const decisionsText = keyDecisions.decisions
       .map(
         (d) =>
-          `  - Decision: ${d.decision}\n    - Reason: ${d.reason}\n    - Action Items: ${d.actionItems.join(', ')}`
+          `  - Decision: ${d.decision}\n    - Reason: ${d.reason}\n    - Action Items: ${d.actionItems.join(
+            ', '
+          )}`
       )
       .join('\n\n');
+
+    const tasksText =
+      teamTasks?.tasks
+        .map(
+          (t) =>
+            `  - Assignee: ${t.assignee}\n    - Task: ${t.task}\n    - Deadline: ${
+              t.deadline || 'N/A'
+            }`
+        )
+        .join('\n\n') || 'No tasks assigned.';
 
     const content = `MEETING SENSEI ANALYSIS
 =========================
@@ -53,6 +74,10 @@ ${decisionsText}
 ACTION TIMELINE
 ---------------
 ${timeline.timeline}
+
+TEAM ACCOUNTABILITY
+-------------------
+${tasksText}
 `;
     const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
@@ -76,6 +101,12 @@ ${timeline.timeline}
             <Redo className="mr-2" />
             New Analysis
           </Button>
+          <Button asChild variant="outline">
+            <Link href="/accountability">
+              <Users className="mr-2" />
+              Accountability
+            </Link>
+          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button>
@@ -97,7 +128,7 @@ ${timeline.timeline}
         </div>
       </div>
       <div className="printable-area">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:col-cols-2 lg:grid-cols-4 gap-6">
           <div className="md:col-span-1 lg:col-span-2">
             <MetadataCard category={analysis.category.category} />
           </div>

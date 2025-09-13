@@ -5,6 +5,7 @@ import type { AnalyzeMeetingSentimentOutput } from '@/ai/flows/analyze-meeting-s
 import type { GenerateActionTimelineOutput } from '@/ai/flows/generate-action-timeline';
 import type { TranscribeVideoOutput } from '@/ai/flows/transcribe-video';
 import type { TranscribeDocumentOutput } from '@/ai/flows/transcribe-document';
+import type { ExtractTeamTasksOutput } from '@/ai/flows/extract-team-tasks';
 
 export type Analysis = {
   summary: SummarizeMeetingTranscriptOutput;
@@ -12,6 +13,7 @@ export type Analysis = {
   category: CategorizeMeetingOutput;
   sentiment: AnalyzeMeetingSentimentOutput;
   timeline: GenerateActionTimelineOutput;
+  teamTasks: ExtractTeamTasksOutput;
 };
 
 export type Transcription = TranscribeVideoOutput | TranscribeDocumentOutput;

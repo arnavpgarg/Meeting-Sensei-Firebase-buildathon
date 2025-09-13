@@ -8,3 +8,4 @@ import '@/ai/flows/summarize-meeting-transcript.ts';
 import '@/ai/flows/generate-action-timeline.ts';
 import '@/ai/flows/transcribe-video.ts';
 import '@/ai/flows/transcribe-document.ts';
+import '@/ai/flows/extract-team-tasks.ts';
