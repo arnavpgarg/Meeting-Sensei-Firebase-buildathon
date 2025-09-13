@@ -126,7 +126,7 @@ export function TranscriptInput({
                     className="flex-1"
                   >
                     <Upload className="mr-2" />
-                    Upload File
+                    Upload File (upto 35MB)
                   </Button>
                   {file && (
                     <Button variant="ghost" size="icon" onClick={handleRemoveFile} aria-label="Remove file">
