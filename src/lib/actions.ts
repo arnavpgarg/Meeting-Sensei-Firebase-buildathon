@@ -6,6 +6,7 @@ import { categorizeMeeting } from '@/ai/flows/categorize-meeting-by-topic';
 import { analyzeMeetingSentiment } from '@/ai/flows/analyze-meeting-sentiment';
 import { generateActionTimeline } from '@/ai/flows/generate-action-timeline';
 import { transcribeVideo } from '@/ai/flows/transcribe-video';
+import { transcribeDocument } from '@/ai/flows/transcribe-document';
 import type { Analysis } from './types';
 
 async function runAnalysis(
@@ -60,6 +61,24 @@ export async function analyzeVideo(
     return {
       data: null,
       error: 'An error occurred during video analysis. Please try again.',
+    };
+  }
+}
+
+export async function analyzeDocument(
+  documentDataUri: string
+): Promise<{ data: Analysis | null; error: string | null }> {
+  try {
+    const { transcript } = await transcribeDocument({ documentDataUri });
+    if (!transcript) {
+      return { data: null, error: 'Could not extract text from the document.' };
+    }
+    return runAnalysis(transcript);
+  } catch (e) {
+    console.error('Error during document analysis:', e);
+    return {
+      data: null,
+      error: 'An error occurred during document analysis. Please try again.',
     };
   }
 }

@@ -33,7 +33,7 @@ export function TranscriptInput({
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
       setFile(selectedFile);
-      setTranscript(`Analyzing video: ${selectedFile.name}`);
+      setTranscript(`Analyzing file: ${selectedFile.name}`);
     }
   };
 
@@ -57,7 +57,7 @@ export function TranscriptInput({
             Upload Your Meeting Recording
           </CardTitle>
           <CardDescription className="text-center">
-            Paste a transcript, or upload a video file to get started.
+            Paste a transcript, or upload a video, PDF, or text file to get started.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -91,20 +91,24 @@ export function TranscriptInput({
                 disabled={isLoading}
               >
                 <Upload className="mr-2" />
-                Upload Video
+                Upload File
               </Button>
               <Input
                 type="file"
                 ref={fileInputRef}
                 onChange={handleFileChange}
                 className="hidden"
-                accept="video/mp4,video/webm"
+                accept="video/mp4,video/webm,application/pdf,text/plain"
               />
 
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <Film className="h-4 w-4" />
                   <span>MP4, WebM</span>
+                </div>
+                 <div className="flex items-center gap-2">
+                  <FileText className="h-4 w-4" />
+                  <span>PDF, TXT</span>
                 </div>
               </div>
               <Button

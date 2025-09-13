@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import type { Analysis } from '@/lib/types';
-import { analyzeTranscript, analyzeVideo } from '@/lib/actions';
+import { analyzeTranscript, analyzeVideo, analyzeDocument } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
 import { TranscriptInput } from '@/components/transcript-input';
 import { AnalysisView } from '@/components/analysis-view';
@@ -60,14 +60,18 @@ export function Dashboard() {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = async () => {
-        const videoDataUri = reader.result as string;
-        result = await analyzeVideo(videoDataUri);
+        const dataUri = reader.result as string;
+        if (file.type.startsWith('video/')) {
+          result = await analyzeVideo(dataUri);
+        } else {
+          result = await analyzeDocument(dataUri);
+        }
         handleResult(result);
       };
       reader.onerror = () => {
         handleResult({
           data: null,
-          error: 'Failed to read the video file.',
+          error: 'Failed to read the file.',
         });
       };
     } else {
