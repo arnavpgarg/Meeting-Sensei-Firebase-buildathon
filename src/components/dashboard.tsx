@@ -50,7 +50,7 @@ export function Dashboard() {
     setAnalysis(null);
   };
 
-  const handleAnalyze = async (currentTranscript: string, file?: File) => {
+  const handleAnalyze = async (currentTranscript: string, file?: File, language?: string) => {
     if (isLoading) return;
     setIsLoading(true);
     setAnalysis(null);
@@ -62,9 +62,9 @@ export function Dashboard() {
       reader.onload = async () => {
         const dataUri = reader.result as string;
         if (file.type.startsWith('video/')) {
-          result = await analyzeVideo(dataUri);
+          result = await analyzeVideo(dataUri, language);
         } else {
-          result = await analyzeDocument(dataUri);
+          result = await analyzeDocument(dataUri, language);
         }
         handleResult(result);
       };
@@ -75,7 +75,7 @@ export function Dashboard() {
         });
       };
     } else {
-      result = await analyzeTranscript(currentTranscript);
+      result = await analyzeTranscript(currentTranscript, language);
       handleResult(result);
     }
   };

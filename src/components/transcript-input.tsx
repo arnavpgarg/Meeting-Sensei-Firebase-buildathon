@@ -12,13 +12,35 @@ import {
 } from '@/components/ui/card';
 import { useRef, useState } from 'react';
 import { Input } from './ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
 
 type TranscriptInputProps = {
-  onAnalyze: (transcript: string, file?: File) => void;
+  onAnalyze: (transcript: string, file?: File, language?: string) => void;
   isLoading: boolean;
   transcript: string;
   setTranscript: (transcript: string) => void;
 };
+
+const languages = [
+  { value: 'English', label: 'English' },
+  { value: 'Spanish', label: 'Spanish' },
+  { value: 'French', label: 'French' },
+  { value: 'German', label: 'German' },
+  { value: 'Italian', label: 'Italian' },
+  { value: 'Portuguese', label: 'Portuguese' },
+  { value: 'Dutch', label: 'Dutch' },
+  { value: 'Russian', label: 'Russian' },
+  { value: 'Chinese', label: 'Chinese' },
+  { value: 'Japanese', label: 'Japanese' },
+  { value: 'Korean', label: 'Korean' },
+  { value: 'Arabic', label: 'Arabic' },
+];
 
 export function TranscriptInput({
   onAnalyze,
@@ -28,6 +50,7 @@ export function TranscriptInput({
 }: TranscriptInputProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [language, setLanguage] = useState<string>('English');
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -43,9 +66,9 @@ export function TranscriptInput({
 
   const handleAnalyzeClick = () => {
     if (file) {
-      onAnalyze('', file);
+      onAnalyze('', file, language);
     } else {
-      onAnalyze(transcript);
+      onAnalyze(transcript, undefined, language);
     }
   };
 
@@ -83,23 +106,40 @@ export function TranscriptInput({
                 </span>
               </div>
             </div>
-
+            
             <div className="flex flex-col items-center gap-4">
-              <Button
-                variant="outline"
-                onClick={handleUploadClick}
-                disabled={isLoading}
-              >
-                <Upload className="mr-2" />
-                Upload File
-              </Button>
-              <Input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                className="hidden"
-                accept="video/mp4,video/webm,application/pdf,text/plain"
-              />
+               <div className="flex w-full max-w-sm items-center gap-2">
+                 <Button
+                    variant="outline"
+                    onClick={handleUploadClick}
+                    disabled={isLoading}
+                    className="flex-1"
+                  >
+                    <Upload className="mr-2" />
+                    Upload File
+                  </Button>
+                  <Input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    className="hidden"
+                    accept="video/mp4,video/webm,application/pdf,text/plain"
+                  />
+
+                  <Select value={language} onValueChange={setLanguage}>
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Language" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {languages.map((lang) => (
+                        <SelectItem key={lang.value} value={lang.value}>
+                          {lang.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+               </div>
+
 
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
