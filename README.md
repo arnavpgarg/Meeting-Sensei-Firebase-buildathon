@@ -4,6 +4,8 @@
 
 ![Meeting Sensei Screenshot](https://storage.googleapis.com/static.aifirebase.dev/project-screenshots/meeting-sensei.png)
 
+[**Live Demo**](https://your-preview-link-here.com)
+
 ## ✨ Key Features
 
 - **Transcript Analysis**: Upload a meeting transcript as a `.txt`, `.pdf`, or video file (`.mp4`, `.webm`), or simply paste the text directly.
