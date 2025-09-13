@@ -1,6 +1,6 @@
 'use client';
 
-import { FileText, Loader2, Sparkles, Film, Upload } from 'lucide-react';
+import { FileText, Loader2, Sparkles, Film, Upload, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -57,7 +57,7 @@ export function TranscriptInput({
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
       setFile(selectedFile);
-      setTranscript(`Analyzing file: ${selectedFile.name}`);
+      setTranscript(`File selected: ${selectedFile.name}`);
     }
   };
 
@@ -72,6 +72,15 @@ export function TranscriptInput({
       onAnalyze(transcript, undefined, language);
     }
   };
+
+  const handleRemoveFile = () => {
+    setFile(null);
+    setTranscript('');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -119,6 +128,11 @@ export function TranscriptInput({
                     <Upload className="mr-2" />
                     Upload File
                   </Button>
+                  {file && (
+                    <Button variant="ghost" size="icon" onClick={handleRemoveFile} aria-label="Remove file">
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )}
                   <Input
                     type="file"
                     ref={fileInputRef}
