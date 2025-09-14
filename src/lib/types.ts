@@ -14,6 +14,8 @@ export type Analysis = {
   sentiment: AnalyzeMeetingSentimentOutput;
   timeline: GenerateActionTimelineOutput;
   teamTasks: ExtractTeamTasksOutput;
+  transcript: string;
+  createdAt: any;
 };
 
 export type Transcription = TranscribeVideoOutput | TranscribeDocumentOutput;

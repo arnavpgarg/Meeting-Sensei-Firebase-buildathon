@@ -22,14 +22,16 @@ import { KeyDecisionsCard } from './key-decisions-card';
 import { MetadataCard } from './metadata-card';
 import { SentimentCard } from './sentiment-card';
 import { TimelineCard } from './timeline-card';
-import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 type AnalysisViewProps = {
   analysis: Analysis;
   onReset: () => void;
+  meetingId?: string;
 };
 
-export function AnalysisView({ analysis, onReset }: AnalysisViewProps) {
+export function AnalysisView({ analysis, onReset, meetingId }: AnalysisViewProps) {
+  const router = useRouter();
 
   const handleExportTxt = () => {
     const { category, sentiment, summary, keyDecisions, timeline, teamTasks } =
@@ -84,7 +86,7 @@ ${tasksText}
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
 a.href = url;
-    a.download = 'meeting-analysis.txt';
+    a.download = `meeting-analysis-${meetingId || 'export'}.txt`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -93,14 +95,8 @@ a.href = url;
     window.print();
   };
 
-  // This is a temporary solution to redirect to the accountability page.
-  // In a real app, this would be handled with a proper router.
-  const accountabilityLink = `/accountability?data=${encodeURIComponent(
-    JSON.stringify(analysis.teamTasks)
-  )}`;
-  const timelineLink = `/timeline?data=${encodeURIComponent(
-    JSON.stringify(analysis.timeline)
-  )}`;
+  const accountabilityLink = meetingId ? `/meeting/${meetingId}/accountability` : `/accountability?data=${encodeURIComponent(JSON.stringify(analysis.teamTasks))}`;
+  const timelineLink = meetingId ? `/meeting/${meetingId}/timeline` : `/timeline?data=${encodeURIComponent(JSON.stringify(analysis.timeline))}`;
 
   return (
     <div className="flex flex-col gap-8">

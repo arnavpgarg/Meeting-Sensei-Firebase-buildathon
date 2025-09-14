@@ -10,11 +10,15 @@ import { transcribeVideo } from '@/ai/flows/transcribe-video';
 import { transcribeDocument } from '@/ai/flows/transcribe-document';
 import { extractTeamTasks } from '@/ai/flows/extract-team-tasks';
 import type { Analysis } from './types';
+import { db } from './firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { redirect } from 'next/navigation';
+
 
 async function runAnalysis(
   transcript: string,
   language?: string
-): Promise<{ data: Analysis | null; error: string | null }> {
+): Promise<{ data: Analysis | null; error: string | null; meetingId?: string; }> {
   if (!transcript || transcript.trim().length < 20) {
     return {
       data: null,
@@ -56,6 +60,8 @@ async function runAnalysis(
       sentiment: sentiment || { sentiment: 'neutral', reason: 'Sentiment analysis failed.' },
       timeline: timeline || { timeline: [], ganttChartMarkdown: 'Timeline could not be generated.' },
       teamTasks: teamTasks || { tasks: [] },
+      transcript,
+      createdAt: serverTimestamp(),
     };
     
     let errorMessage = null;
@@ -65,11 +71,14 @@ async function runAnalysis(
     } else if (errors.length > 0) {
       errorMessage = `Some analysis tasks failed, but we recovered partial results. Failures: ${errors.join(', ')}`;
     }
+    
+     const docRef = await addDoc(collection(db, 'meetings'), analysisData);
 
 
     return {
       data: analysisData,
       error: errorMessage,
+      meetingId: docRef.id,
     };
   } catch (e) {
     console.error('Error during AI analysis:', e);
@@ -80,23 +89,41 @@ async function runAnalysis(
   }
 }
 
+async function handleAnalysisAndRedirect(
+  analysisPromise: Promise<{ data: Analysis | null; error: string | null; meetingId?: string; }>
+) {
+  const result = await analysisPromise;
+  if (result.error && !result.data) {
+    // Full failure, we can't redirect. The client will handle showing the toast.
+    return result;
+  }
+  
+  if (result.meetingId) {
+    redirect(`/meeting/${result.meetingId}`);
+  }
+  
+  // This return is for the client-side, in case redirect doesn't happen,
+  // although it should with the logic above.
+  return result;
+}
+
 export async function analyzeTranscript(
   transcript: string,
   language?: string
-): Promise<{ data: Analysis | null; error: string | null }> {
-  return runAnalysis(transcript, language);
+) {
+  return handleAnalysisAndRedirect(runAnalysis(transcript, language));
 }
 
 export async function analyzeVideo(
   videoDataUri: string,
   language?: string
-): Promise<{ data: Analysis | null; error: string | null }> {
+) {
   try {
     const { transcript } = await transcribeVideo({ videoDataUri });
     if (!transcript) {
       return { data: null, error: 'Could not transcribe the video.' };
     }
-    return runAnalysis(transcript, language);
+    return handleAnalysisAndRedirect(runAnalysis(transcript, language));
   } catch (e) {
     console.error('Error during video analysis:', e);
     return {
@@ -109,13 +136,13 @@ export async function analyzeVideo(
 export async function analyzeDocument(
   documentDataUri: string,
   language?: string
-): Promise<{ data: Analysis | null; error: string | null }> {
+) {
   try {
     const { transcript } = await transcribeDocument({ documentDataUri });
     if (!transcript) {
       return { data: null, error: 'Could not extract text from the document.' };
     }
-    return runAnalysis(transcript, language);
+    return handleAnalysisAndRedirect(runAnalysis(transcript, language));
   } catch (e) {
     console.error('Error during document analysis:', e);
     return {
@@ -124,6 +151,7 @@ export async function analyzeDocument(
     };
   }
 }
+
 
 export async function getLiveSummary(
   transcript: string,

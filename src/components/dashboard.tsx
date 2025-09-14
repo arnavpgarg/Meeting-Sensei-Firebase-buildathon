@@ -9,19 +9,19 @@ import {
 } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
 import { TranscriptInput } from '@/components/transcript-input';
-import { AnalysisView } from '@/components/analysis-view';
 import { AnalysisSkeleton } from '@/components/analysis-skeleton';
 import { LiveSummary } from './live-summary';
+import { useRouter } from 'next/navigation';
 
 export function Dashboard() {
-  const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [transcript, setTranscript] = useState('');
   const { toast } = useToast();
+  const router = useRouter();
 
   const handleReset = () => {
-    setAnalysis(null);
     setTranscript('');
+    router.push('/');
   };
 
   const handleAnalyze = async (
@@ -31,31 +31,33 @@ export function Dashboard() {
   ) => {
     if (isLoading) return;
     setIsLoading(true);
-    setAnalysis(null);
     setTranscript(currentTranscript);
 
     let result;
-    if (file) {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = async () => {
-        const dataUri = reader.result as string;
+    try {
+      if (file) {
+        const dataUri = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = (error) => reject(error);
+        });
+
         if (file.type.startsWith('video/')) {
           result = await analyzeVideo(dataUri, language);
         } else {
           result = await analyzeDocument(dataUri, language);
         }
-        handleResult(result);
-      };
-      reader.onerror = () => {
-        handleResult({
-          data: null,
-          error: 'Failed to read the file.',
-        });
-      };
-    } else {
-      result = await analyzeTranscript(currentTranscript, language);
+      } else {
+        result = await analyzeTranscript(currentTranscript, language);
+      }
       handleResult(result);
+    } catch (e) {
+       console.error("Analysis failed", e);
+       handleResult({
+          data: null,
+          error: e instanceof Error ? e.message : 'An unknown error occurred.',
+        });
     }
   };
 
@@ -63,23 +65,15 @@ export function Dashboard() {
     data: Analysis | null;
     error: string | null;
   }) => {
-    if (result.error && !result.data) {
+    if (result.error) {
       toast({
         variant: 'destructive',
-        title: 'Analysis Failed',
+        title: result.data ? 'Partial Analysis' : 'Analysis Failed',
         description: result.error,
       });
-    } else if (result.error && result.data) {
-       toast({
-        variant: 'destructive',
-        title: 'Partial Analysis',
-        description: 'Some tasks failed, but we recovered partial results.',
-      });
     }
-
-    if (result.data) {
-      setAnalysis(result.data);
-    }
+    // With server-side redirect, we don't need to set analysis here.
+    // If the server action fails before redirect, we show a toast.
     setIsLoading(false);
   };
 
@@ -87,8 +81,6 @@ export function Dashboard() {
     <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
       {isLoading ? (
         <AnalysisSkeleton />
-      ) : analysis ? (
-        <AnalysisView analysis={analysis} onReset={handleReset} />
       ) : (
         <div className="space-y-8">
           <TranscriptInput
