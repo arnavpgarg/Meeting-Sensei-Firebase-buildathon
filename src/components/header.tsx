@@ -1,7 +1,6 @@
 import Link from 'next/link';
-import { BrainCircuit, History } from 'lucide-react';
+import { BrainCircuit } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Button } from './ui/button';
 
 export function Header() {
   return (
@@ -13,14 +12,6 @@ export function Header() {
             Meeting Sensei
           </h1>
         </Link>
-        <div className="flex items-center gap-2">
-          <Button asChild variant="outline">
-            <Link href="/history">
-              <History className="mr-2" />
-              History
-            </Link>
-          </Button>
-        </div>
       </div>
     </header>
   );

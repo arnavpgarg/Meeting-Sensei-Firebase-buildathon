@@ -10,13 +10,11 @@ import { transcribeVideo } from '@/ai/flows/transcribe-video';
 import { transcribeDocument } from '@/ai/flows/transcribe-document';
 import { extractTeamTasks } from '@/ai/flows/extract-team-tasks';
 import type { Analysis } from './types';
-import { db } from './firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 async function runAnalysis(
   transcript: string,
   language?: string
-): Promise<{ data: Analysis | null; error: string | null; id?: string }> {
+): Promise<{ data: Analysis | null; error: string | null }> {
   if (!transcript || transcript.trim().length < 20) {
     return {
       data: null,
@@ -49,16 +47,9 @@ async function runAnalysis(
       teamTasks,
     };
 
-    const docRef = await addDoc(collection(db, 'meetings'), {
-      ...analysisData,
-      transcript,
-      createdAt: serverTimestamp(),
-    });
-
     return {
       data: analysisData,
       error: null,
-      id: docRef.id,
     };
   } catch (e) {
     console.error('Error during AI analysis:', e);
@@ -72,14 +63,14 @@ async function runAnalysis(
 export async function analyzeTranscript(
   transcript: string,
   language?: string
-): Promise<{ data: Analysis | null; error: string | null; id?: string }> {
+): Promise<{ data: Analysis | null; error: string | null }> {
   return runAnalysis(transcript, language);
 }
 
 export async function analyzeVideo(
   videoDataUri: string,
   language?: string
-): Promise<{ data: Analysis | null; error: string | null; id?: string }> {
+): Promise<{ data: Analysis | null; error: string | null }> {
   try {
     const { transcript } = await transcribeVideo({ videoDataUri });
     if (!transcript) {
@@ -98,7 +89,7 @@ export async function analyzeVideo(
 export async function analyzeDocument(
   documentDataUri: string,
   language?: string
-): Promise<{ data: Analysis | null; error: string | null; id?: string }> {
+): Promise<{ data: Analysis | null; error: string | null }> {
   try {
     const { transcript } = await transcribeDocument({ documentDataUri });
     if (!transcript) {

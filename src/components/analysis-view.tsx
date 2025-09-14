@@ -27,10 +27,9 @@ import { useEffect } from 'react';
 type AnalysisViewProps = {
   analysis: Analysis;
   onReset: () => void;
-  meetingId?: string;
 };
 
-export function AnalysisView({ analysis, onReset, meetingId }: AnalysisViewProps) {
+export function AnalysisView({ analysis, onReset }: AnalysisViewProps) {
 
   const handleExportTxt = () => {
     const { category, sentiment, summary, keyDecisions, timeline, teamTasks } =
@@ -94,6 +93,15 @@ a.href = url;
     window.print();
   };
 
+  // This is a temporary solution to redirect to the accountability page.
+  // In a real app, this would be handled with a proper router.
+  const accountabilityLink = `/accountability?data=${encodeURIComponent(
+    JSON.stringify(analysis.teamTasks)
+  )}`;
+  const timelineLink = `/timeline?data=${encodeURIComponent(
+    JSON.stringify(analysis.timeline)
+  )}`;
+
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 no-print">
@@ -103,14 +111,14 @@ a.href = url;
             <Redo className="mr-2" />
             New Analysis
           </Button>
-          <Button asChild variant="outline" disabled={!meetingId}>
-            <Link href={`/meeting/${meetingId}/accountability`}>
+          <Button asChild variant="outline">
+            <Link href={accountabilityLink}>
               <Users className="mr-2" />
               Accountability
             </Link>
           </Button>
-          <Button asChild variant="outline" disabled={!meetingId}>
-            <Link href={`/meeting/${meetingId}/timeline`}>
+          <Button asChild variant="outline">
+            <Link href={timelineLink}>
               <BarChart2 className="mr-2" />
               Actions Chart
             </Link>

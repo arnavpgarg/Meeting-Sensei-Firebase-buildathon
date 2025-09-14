@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import type { Analysis } from '@/lib/types';
 import {
   analyzeTranscript,
@@ -16,16 +15,13 @@ import { LiveSummary } from './live-summary';
 
 export function Dashboard() {
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
-  const [meetingId, setMeetingId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [transcript, setTranscript] = useState('');
   const { toast } = useToast();
-  const router = useRouter();
 
   const handleReset = () => {
     setAnalysis(null);
     setTranscript('');
-    setMeetingId(null);
   };
 
   const handleAnalyze = async (
@@ -66,7 +62,6 @@ export function Dashboard() {
   const handleResult = (result: {
     data: Analysis | null;
     error: string | null;
-    id?: string;
   }) => {
     if (result.error) {
       toast({
@@ -78,11 +73,6 @@ export function Dashboard() {
 
     if (result.data) {
       setAnalysis(result.data);
-      if (result.id) {
-        setMeetingId(result.id);
-        // Navigate to the new meeting details page to show the result
-        router.push(`/meeting/${result.id}`);
-      }
     }
     setIsLoading(false);
   };
@@ -91,8 +81,8 @@ export function Dashboard() {
     <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
       {isLoading ? (
         <AnalysisSkeleton />
-      ) : analysis && meetingId ? (
-         <AnalysisView analysis={analysis} onReset={handleReset} meetingId={meetingId} />
+      ) : analysis ? (
+        <AnalysisView analysis={analysis} onReset={handleReset} />
       ) : (
         <div className="space-y-8">
           <TranscriptInput
