@@ -63,11 +63,17 @@ export function Dashboard() {
     data: Analysis | null;
     error: string | null;
   }) => {
-    if (result.error) {
+    if (result.error && !result.data) {
       toast({
         variant: 'destructive',
         title: 'Analysis Failed',
         description: result.error,
+      });
+    } else if (result.error && result.data) {
+       toast({
+        variant: 'destructive',
+        title: 'Partial Analysis',
+        description: 'Some tasks failed, but we recovered partial results.',
       });
     }
 
