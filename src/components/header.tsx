@@ -1,6 +1,5 @@
 import Link from 'next/link';
-import { BrainCircuit, History } from 'lucide-react';
-import { Button } from './ui/button';
+import {BrainCircuit} from 'lucide-react';
 
 export function Header() {
   return (
@@ -12,12 +11,6 @@ export function Header() {
             Meeting Sensei
           </h1>
         </Link>
-        <Button asChild variant="outline">
-          <Link href="/history">
-            <History className="mr-2" />
-            History
-          </Link>
-        </Button>
       </div>
     </header>
   );
